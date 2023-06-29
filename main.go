@@ -1,8 +1,6 @@
 package main
 
 import (
-	"embed"
-	_ "embed"
 	"encoding/csv"
 	"html/template"
 	"io"
@@ -31,12 +29,9 @@ type Ranking struct {
 }
 
 var (
-	csvFiles = make(map[string]*CSVFile)
-	rankings []Ranking
-
-	//go:embed templates/index.html
-	indexHtml embed.FS
-	templates = template.Must(template.ParseFS(indexHtml, "templates/index.html"))
+	csvFiles  = make(map[string]*CSVFile)
+	rankings  []Ranking
+	templates = template.Must(template.ParseFiles("templates/index.html"))
 )
 
 func main() {
