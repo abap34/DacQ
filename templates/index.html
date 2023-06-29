@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>traggle</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/traggle.png">
+</head>
+<body>
+    <div class="container">
+        <h1>DacQ</h1>
+
+        <h2>投稿</h2>
+        <form method="post" action="/upload-csv" enctype="multipart/form-data" class="form-group">
+            <label for="csv_file">ファイル</label>
+            <input type="file" name="csv_file" id="csv_file">
+            <br>
+            <button type="submit">Upload</button>
+        </form>
+
+        <table class="ranking-table">
+            <tr>
+                <th class="rank">Rank</th>
+                <th class="user">User</th>
+                <th class="loss">Loss</th>
+            </tr>
+            {{ range .Rankings }}
+            <tr>
+                <td class="rank">{{ .Rank }}</td>
+                <td class="user">{{ .User }}</td>
+                <td class="loss">{{ .Loss }}</td>
+            </tr>
+            {{ end }}
+        </table>
+    </div>
+</body>
+</html>
