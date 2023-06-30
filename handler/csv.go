@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"github.com/dacq/model"
 	"io"
 	"net/http"
 	"os"
@@ -31,7 +32,17 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer osFile.Close()
+	defer func() {
+		//delete
+		err := os.Remove(osFile.Name())
+		if err != nil {
+			fmt.Println("failed to delete file: ", err.Error())
+		}
+		err = osFile.Close()
+		if err != nil {
+			fmt.Println("failed to close file: ", err.Error())
+		}
+	}()
 
 	_, err = io.Copy(osFile, file)
 	if err != nil {
@@ -48,22 +59,31 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, ranking := range rankings {
-		if ranking.User == user {
-			if csvFile.Loss < ranking.Loss {
-				rankings[i].Loss = csvFile.Loss
-				conguraturation(w, r, user, csvFile.Loss, true)
-				fmt.Println("Conguraturation!")
-				return
-			} else {
-				fmt.Println("not Conguraturation!")
-				conguraturation(w, r, user, csvFile.Loss, false)
-				return
-			}
+	prevScore, err := model.GetScoreByUser(user)
+
+	if err != nil {
+		if err.Error() != "record not found" {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
+
+		conguraturation(w, r, user, csvFile.Loss, true)
+		fmt.Println("Conguraturation!")
+		score := model.Score{User: user, Loss: csvFile.Loss}
+		err = model.CreateScore(score)
+
+		return
 	}
 
-	rankings = append(rankings, Ranking{User: csvFile.User, Loss: csvFile.Loss})
-
-	http.Redirect(w, r, "/", http.StatusFound)
+	if prevScore.Loss > csvFile.Loss {
+		score := model.Score{User: user, Loss: csvFile.Loss}
+		err = model.UpdateScore(score)
+		conguraturation(w, r, user, csvFile.Loss, true)
+		fmt.Println("Conguraturation!")
+		return
+	} else {
+		fmt.Println("not Conguraturation!")
+		conguraturation(w, r, user, csvFile.Loss, false)
+		return
+	}
 }

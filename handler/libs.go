@@ -8,14 +8,13 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"sort"
 	"strconv"
 )
 
 var (
 	csvFiles  = make(map[string]*CSVFile)
 	templates = template.Must(template.ParseFiles("templates/index.html"))
-	rankings  []Ranking
+	xxxx      []Ranking
 )
 
 func conguraturation(w http.ResponseWriter, r *http.Request, user string, loss float64, isBest bool) {
@@ -23,16 +22,6 @@ func conguraturation(w http.ResponseWriter, r *http.Request, user string, loss f
 	redirectURL := "/result?user=" + url.QueryEscape(user) + "&loss=" + strconv.FormatFloat(loss, 'f', -1, 64) + "&isBest=" + strconv.FormatBool(isBest)
 	fmt.Println("redirectURL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusFound)
-}
-
-func sortRankings() {
-	sort.Slice(rankings, func(i, j int) bool {
-		return rankings[i].Loss < rankings[j].Loss
-	})
-
-	for i := range rankings {
-		rankings[i].Rank = i + 1
-	}
 }
 
 // CSVFile represents the CSV file uploaded by the user.
