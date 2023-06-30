@@ -1,0 +1,15 @@
+version: "3"
+services:
+  db:
+    container_name: dacq-db
+    image: mariadb:10.5.9
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: database
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/mysql
