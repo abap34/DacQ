@@ -59,7 +59,7 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	prevScore, err := model.GetScoreByUser(user)
+	score, err := model.GetScoreByUser(user)
 
 	if err != nil {
 		if err.Error() != "record not found" {
@@ -75,9 +75,12 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if prevScore.Loss > csvFile.Loss {
-		score := model.Score{User: user, Loss: csvFile.Loss}
-		err = model.UpdateScore(score)
+	if score.Loss > csvFile.Loss {
+		err = model.UpdateScore(score.User, csvFile.Loss)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		conguraturation(w, r, user, csvFile.Loss, true)
 		fmt.Println("Conguraturation!")
 		return

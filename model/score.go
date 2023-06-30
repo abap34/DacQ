@@ -21,6 +21,6 @@ func GetRankings() ([]Score, error) {
 	return scores, err
 }
 
-func UpdateScore(score Score) error {
-	return db.Save(&score).Error
+func UpdateScore(user string, val float64) error {
+	return db.Model(&Score{}).Where("user = ?", user).Update("loss", val).Error
 }
