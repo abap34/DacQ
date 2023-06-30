@@ -4,10 +4,8 @@ import (
 	"encoding/csv"
 	"html/template"
 	"io"
-	"bytes"
 	"net/url"
 	"fmt"
-	"strings"
 	"log"
 	"net/http"
 	"os"
@@ -124,26 +122,26 @@ func uploadCSVHandler(w http.ResponseWriter, r *http.Request) {
 		if ranking.User == user {
 			if csvFile.Loss < ranking.Loss {
 				rankings[i].Loss = csvFile.Loss
-				conguraturation(w, r, user, csvFile.Loss)
+				conguraturation(w, r, user, csvFile.Loss, true)
 				fmt.Println("Conguraturation!")
 				return 
 			} else {
-				not_conguraturation(w, user, csvFile.Loss)
 				fmt.Println("not Conguraturation!")
+				conguraturation(w, r, user, csvFile.Loss, false)
 				return
 			}
 		}
 	}
 
-	
-
 	rankings = append(rankings, Ranking{User: csvFile.User, Loss: csvFile.Loss})
+
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func conguraturation(w http.ResponseWriter, r *http.Request, user string, loss float64) {
+
+func conguraturation(w http.ResponseWriter, r *http.Request, user string, loss float64, isBest bool) {
 	fmt.Println("Conguraturation!")
-	redirectURL := "/result?user=" + url.QueryEscape(user) + "&loss=" + strconv.FormatFloat(loss, 'f', -1, 64)
+	redirectURL := "/result?user=" + url.QueryEscape(user) + "&loss=" + strconv.FormatFloat(loss, 'f', -1, 64) + "&isBest=" + strconv.FormatBool(isBest)
 	fmt.Println("redirectURL: ", redirectURL)
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
@@ -152,6 +150,12 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("resultHandler")
 	user := r.URL.Query().Get("user")
 	lossStr := r.URL.Query().Get("loss")
+	isBestStr := r.URL.Query().Get("isBest")
+	isBest, err := strconv.ParseBool(isBestStr)
+	if err != nil {
+		http.Error(w, "Invalid isBest value", http.StatusBadRequest)
+		return
+	}
 	loss, err := strconv.ParseFloat(lossStr, 64)
 	if err != nil {
 		http.Error(w, "Invalid loss value", http.StatusBadRequest)
@@ -167,9 +171,11 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		User string
 		Loss float64
+		IsBest bool
 	}{
 		User: user,
 		Loss: loss,
+		IsBest: isBest,
 	}
 
 	err = tmpl.Execute(w, data)
@@ -177,64 +183,6 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-
-
-
-func not_conguraturation(w http.ResponseWriter, user string, loss float64) {
-	popupTemplate := `
-		<!DOCTYPE html>
-		<html>
-		<head>
-			<title>Keep Going!</title>
-			<style>
-				.popup {
-					position: fixed;
-					top: 50%;
-					left: 50%;
-					transform: translate(-50%, -50%);
-					background-color: #fff;
-					padding: 20px;
-					border: 1px solid #000;
-					box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-					z-index: 9999;
-				}
-			</style>
-		</head>
-		<body>
-			<div class="popup">
-				<h1>Keep Going, {{.User}}!</h1>
-				<p>Your loss is {{.Loss}}. Better luck next time!</p>
-			</div>
-		</body>
-		</html>
-	`
-
-	tmpl := template.Must(template.New("not_conguraturation").Parse(popupTemplate))
-
-	data := struct {
-		User string
-		Loss float64
-	}{
-		User: user,
-		Loss: loss,
-	}
-
-	var buf bytes.Buffer
-	err := tmpl.Execute(&buf, data)
-	if err != nil {
-		log.Println("Failed to execute template:", err)
-		return
-	}
-
-	js := fmt.Sprintf(`
-		<script>
-			document.body.insertAdjacentHTML('beforeend', '%s');
-		</script>
-	`, strings.ReplaceAll(template.HTMLEscapeString(buf.String()), "'", `\'`))
-
-	fmt.Fprint(w, js)
 }
 
 

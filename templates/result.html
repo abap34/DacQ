@@ -39,7 +39,8 @@
 	</style>
 </head>
 <body>
-	<div class="container">
+	{{ if .IsBest }}
+    <div class="container">
 		<h1 class="heading">Congratulations, <span class="user">{{.User}}</span>!</h1>
 		<p class="message">You achieved the highest loss score of <span class="loss" id="loss">{{.Loss}}</span>.</p>
 		<p class="message">Keep up the great work!</p>
@@ -56,7 +57,7 @@
 		const lossValue = {{.Loss}}; // lossの値
 		const duration = 3; // アニメーションの時間（秒）
 		const intervalTime = 1; // インターバルの時間間隔（ミリ秒）
-
+        
 		// lossのカウントダウンと減速アニメーション
 		function countdownLoss() {
 			let loss = startValue;
@@ -88,5 +89,22 @@
 		// アニメーションの開始
 		countdownLoss();
 	</script>
+    {{ else }}
+    <!-- change background color blue -->
+    <style>
+        body {
+            background-color: #e6f3ff;
+        }
+    </style>
+    <div class="container">
+        <h1 class="heading">Sorry, <span class="user">{{.User}}</span>...</h1>
+        <p class="message">You achieved a loss score of <span class="loss" id="loss">{{.Loss}}</span>.</p>
+        <p class="message">Try again next time!</p>
+        <!-- back to home -->
+        <p class="message"><a href="/">Back to Rankings</a></p>
+    </div>
+    {{ end }}
 </body>
 </html>
+
+
