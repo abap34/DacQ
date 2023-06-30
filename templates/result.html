@@ -81,11 +81,8 @@
                 const animationProgress = Math.pow(1 - frameProgress, 2); // 減速アニメーションに使用する進捗率（2次関数で減速）
                 const delay = animationProgress * intervalTime; // 遅延時間（ミリ秒）
 
-                setTimeout(() => {
-                    lossElement.textContent = loss;
-                    loss--;
-                }, delay);
-
+                lossElement.textContent = loss;
+                loss--;
                 currentFrame++;
             }, intervalTime);
         }
