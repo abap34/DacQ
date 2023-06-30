@@ -7,9 +7,12 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
+	"fmt"
 )
 
 func main() {
+	fmt.Printf("---------  deplopy  ----------------")
+
 	if err := godotenv.Load(); err != nil {
 		log.Print("Warn: cannot load env file")
 	}
