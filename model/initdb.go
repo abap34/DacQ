@@ -12,7 +12,7 @@ var (
 )
 
 func InitDB() error {
-	user := os.Getenv("NS_MARIADB_USERNAME")
+	user := os.Getenv("NS_MARIADB_USER")
 	pass := os.Getenv("NS_MARIADB_PASSWORD")
 	host := os.Getenv("NS_MARIADB_HOSTNAME")
 	dbname := os.Getenv("NS_MARIADB_DATABASE")
