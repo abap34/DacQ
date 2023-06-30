@@ -69,6 +69,8 @@
 				if (loss <= lossValue) {
 					clearInterval(interval);
                     confetti();
+                    console.log(lossValue);
+                    lossElement.textContent = lossValue;
 					return;
 				}
 
