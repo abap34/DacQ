@@ -12,10 +12,10 @@ var (
 )
 
 func InitDB() error {
-	user := os.Getenv("MARIADB_USERNAME")
-	pass := os.Getenv("MARIADB_PASSWORD")
-	host := os.Getenv("MARIADB_HOSTNAME")
-	dbname := os.Getenv("MARIADB_DATABASE")
+	user := os.Getenv("NS_MARIADB_USERNAME")
+	pass := os.Getenv("NS_MARIADB_PASSWORD")
+	host := os.Getenv("NS_MARIADB_HOSTNAME")
+	dbname := os.Getenv("NS_MARIADB_DATABASE")
 
 	_db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", user, pass, host, dbname)+"?parseTime=True&loc=Asia%2FTokyo&charset=utf8mb4"), &gorm.Config{})
 
