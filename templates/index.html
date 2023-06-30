@@ -4,6 +4,12 @@
     <title>traggle</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <link rel="icon" type="image/png" href="/static/traggle.png">
+    <style>
+        .ranking-table img {
+            width: 20px;  /* アイコンの幅 */
+            height: 20px; /* アイコンの高さ */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -20,12 +26,14 @@
         <table class="ranking-table">
             <tr>
                 <th class="rank">Rank</th>
+                <th class="icon"></th>
                 <th class="user">User</th>
-                <th class="loss">Loss</th>
+                <th class="loss">Loss</th>  <!-- アイコンの列を追加 -->
             </tr>
             {{ range .Rankings }}
             <tr>
                 <td class="rank">{{ .Rank }}</td>
+                <td class="icon"><img src="https://q.trap.jp/api/v3/public/icon/{{ .User }}" alt="Icon"></td>  <!-- アイコンを表示 -->
                 <td class="user">{{ .User }}</td>
                 <td class="loss">{{ .Loss }}</td>
             </tr>
