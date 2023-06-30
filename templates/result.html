@@ -46,8 +46,11 @@
 		<!-- back to home -->
 		<p class="message"><a href="/">Back to Rankings</a></p>
 	</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.3.2/dist/confetti.browser.min.js"></script>
+            
 	<script>
+        
+        
 		// 初期設定
 		const startValue = 1000; // カウントダウンの開始値
 		const lossValue = {{.Loss}}; // lossの値
@@ -64,6 +67,7 @@
 			const interval = setInterval(() => {
 				if (loss <= lossValue) {
 					clearInterval(interval);
+                    confetti();
 					return;
 				}
 
