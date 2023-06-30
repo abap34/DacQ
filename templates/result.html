@@ -55,33 +55,34 @@
 
 
         // 初期設定
-        const startValue = 1000; // カウントダウンの開始値
-        const lossValue = {{.Loss }}; // lossの値
+        const startValue = {{ .Loss }} + 1000; // カウントダウンの開始値
+        const lossValue = {{ .Loss }}; // lossの値
         const duration = 3; // アニメーションの時間（秒）
         const intervalTime = 1; // インターバルの時間間隔（ミリ秒）
+
+        function sigmoid(x) {
+            return 1 / (1 + Math.exp(-x));
+        }
 
         // lossのカウントダウンと減速アニメーション
         function countdownLoss() {
             let loss = startValue;
             const lossElement = document.getElementById('loss');
-            const totalFrames = duration * 1000 / intervalTime; // 総フレーム数
+            const totalFrames = Math.round(startValue - lossValue); // 総フレーム数
             let currentFrame = 0; // 現在のフレーム数
 
-            const interval = setInterval(() => {
+            const interval = setInterval(() => {    
                 if (loss <= lossValue) {
                     clearInterval(interval);
                     confetti();
-                    console.log(lossValue);
                     lossElement.textContent = lossValue;
                     return;
                 }
 
                 // 減速アニメーション
-                const frameProgress = currentFrame / totalFrames; // フレームの進捗率（0〜1）
-                const animationProgress = Math.pow(1 - frameProgress, 2); // 減速アニメーションに使用する進捗率（2次関数で減速）
-                const delay = animationProgress * intervalTime; // 遅延時間（ミリ秒）
-
-                lossElement.textContent = loss;
+                const frameProgress = currentFrame / totalFrames;
+                const coef = sigmoid(frameProgress * 25); // シグモイド関数で減速
+                lossElement.textContent = (startValue - (1000 * coef)).toFixed(5);
                 loss--;
                 currentFrame++;
             }, intervalTime);
