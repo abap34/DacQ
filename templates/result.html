@@ -77,14 +77,14 @@
                 if (loss <= lossValue) {
                     clearInterval(interval);
                     confetti();
-                    lossElement.textContent = lossValue;
+                    lossElement.textContent = lossValue.toFixed(10);
                     return;
                 }
 
                 // 減速アニメーション
                 const frameProgress = currentFrame / totalFrames;
                 const coef = sigmoid(frameProgress * 25); // シグモイド関数で減速
-                lossElement.textContent = (startValue - (1000 * coef)).toFixed(5);
+                lossElement.textContent = (startValue - (1000 * coef)).toFixed(10);
                 loss--;
                 currentFrame++;
             }, intervalTime);
