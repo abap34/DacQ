@@ -1,44 +1,71 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>traggle</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <link rel="icon" type="image/png" href="/static/traggle.png">
-    <style>
-        .ranking-table img {
-            width: 20px;  /* アイコンの幅 */
-            height: 20px; /* アイコンの高さ */
-        }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <h1>DacQ</h1>
 
-        <h2>投稿</h2>
-        <form method="post" action="/upload-csv" enctype="multipart/form-data" class="form-group">
-            <label for="csv_file">ファイル</label>
-            <input type="file" name="csv_file" id="csv_file">
-            <br>
-            <button type="submit">Upload</button>
-        </form>
+<body>
+
+    <div class="header">
+        <div class="logo">
+            <marquee scrollamount="10">
+                <div class="blinking-text">
+                    {{ range .Messages }}
+                    <div class="message">
+                        {{ . }}
+                    </div>
+                    {{ end }}
+                </div>
+                <!-- <img src="/static/traggle.png" behaior="scroll" alt="traggle" class="traggle"> -->
+            </marquee>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="description">
+            <h2>
+                <img src="/static/traggle.png" alt="traggle" class="traggle">
+                Welcome to traggle
+            </h2>
+
+            <ol>
+                <li> csv ファイルをアップロード </li>
+                <li> Submit </li>
+                <li> スコアが最も良かった場合、リーダーボードが更新されます </li>
+            </ol>
+
+            <form method="post" action="/upload-csv" enctype="multipart/form-data" class="form-group">
+                <input type="file" name="csv_file" id="csv_file">
+                <button type="submit">Submit !</button>
+            </form>
+
+        </div>
 
         <table class="ranking-table">
             <tr>
                 <th class="rank">Rank</th>
                 <th class="icon"></th>
                 <th class="user">User</th>
-                <th class="loss">Loss</th>  <!-- アイコンの列を追加 -->
+                <th class="loss">Loss</th>
+                <th class="submitCount">Entries</th>
+                <th class="last">Last</th>
             </tr>
             {{ range .Rankings }}
             <tr>
                 <td class="rank">{{ .Rank }}</td>
-                <td class="icon"><img src="https://q.trap.jp/api/v3/public/icon/{{ .User }}" alt="Icon"></td>  <!-- アイコンを表示 -->
+                <td class="icon"><img src="https://q.trap.jp/api/v3/public/icon/{{ .User }}" alt="Icon"></td>
                 <td class="user">{{ .User }}</td>
                 <td class="loss">{{ .Loss }}</td>
+                <td class="submitcount">{{ .SubmitCount }}</td>
+                <td class="last">{{ .Last }}</td>
             </tr>
             {{ end }}
         </table>
     </div>
 </body>
+
 </html>
