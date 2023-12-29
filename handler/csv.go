@@ -2,10 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"github.com/dacq/model"
 	"io"
 	"net/http"
 	"os"
+	"time"
+
+	"github.com/dacq/model"
 )
 
 func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +77,22 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if score.Loss > csvFile.Loss {
+	is_best := score.Loss > csvFile.Loss
+
+	// イベントログをアップデート
+	err = model.CreateSubmitLog(model.SubmitLog{
+		User:   user,
+		Time:   time.Now().Format("2004-03-04 10:01:01"),
+		IsBest: is_best,
+		Score:  csvFile.Loss,
+	})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if is_best {
 		err = model.UpdateScore(score.User, csvFile.Loss)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -83,10 +100,11 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		}
 		conguraturation(w, r, user, csvFile.Loss, true)
 		fmt.Println("Conguraturation!")
-		return
 	} else {
 		fmt.Println("not Conguraturation!")
 		conguraturation(w, r, user, csvFile.Loss, false)
-		return
 	}
+
+	return
+
 }
