@@ -3,12 +3,13 @@ package handler
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/pkg/errors"
 	"html/template"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
+
+	"github.com/pkg/errors"
 )
 
 var (
@@ -33,9 +34,11 @@ type CSVFile struct {
 
 // Ranking represents the user ranking based on the loss.
 type Ranking struct {
-	User string
-	Loss float64
-	Rank int
+	User        string
+	Loss        float64
+	Rank        int
+	SubmitCount int64
+	Last        string
 }
 
 func getSessionUser(r *http.Request) string {
