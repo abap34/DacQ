@@ -47,22 +47,20 @@ func GetLastSubmitTime(user string) (string, error) {
 
 	if err != nil {
 		if err.Error() == "record not found" {
-			return "過去の投稿が見つかりませんでした", nil
+			return "", nil
 		} else {
 			return "", err
 		}
 	}
 
+
+	lasttime, err := time.Parse("2006-01-02 15:04:05", submitlog.Time)
+
 	if err != nil {
 		return "", err
 	}
 
-	lasttime, err := time.Parse("2004-03-04 10:01:01", submitlog.Time)
-	if err != nil {
-		return "", err
-	}
-
-	diff := time.Now().Sub(lasttime)
+	diff := time.Since(lasttime)
 
 	if diff.Seconds() < 60 {
 		return fmt.Sprintf("%d秒前", int(diff.Seconds())), nil
