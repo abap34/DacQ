@@ -35,7 +35,6 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer func() {
-		//delete
 		err := os.Remove(osFile.Name())
 		if err != nil {
 			fmt.Println("failed to delete file: ", err.Error())
@@ -74,6 +73,10 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		score := model.Score{User: user, Loss: csvFile.Loss}
 		err = model.CreateScore(score)
 
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
 		return
 	}
 
@@ -82,7 +85,7 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 	// イベントログをアップデート
 	err = model.CreateSubmitLog(model.SubmitLog{
 		User:   user,
-		Time:   time.Now().Format("2004-03-04 10:01:01"),
+		Time:   time.Now().Format("2006-01-02 15:04:05"),
 		IsBest: is_best,
 		Score:  csvFile.Loss,
 	})
@@ -104,7 +107,4 @@ func PostUploadCSV(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("not Conguraturation!")
 		conguraturation(w, r, user, csvFile.Loss, false)
 	}
-
-	return
-
 }
