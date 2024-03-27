@@ -15,7 +15,6 @@ import (
 var (
 	csvFiles  = make(map[string]*CSVFile)
 	templates = template.Must(template.ParseFiles("templates/index.html"))
-	xxxx      []Ranking
 )
 
 func conguraturation(w http.ResponseWriter, r *http.Request, user string, loss float64, isBest bool) {
