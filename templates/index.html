@@ -9,48 +9,20 @@
 
 <body>
 
-    <div class="header">
-        <div class="logo">
-            <marquee scrollamount="10">
-                <div class="blinking-text">
-                    {{ range .Messages }}
-                    <div class="message">
-                        {{ . }}
-                    </div>
-                    {{ end }}
-                </div>
-            </marquee>
-        </div>
-    </div>
 
-    <div class="container">
+    <h1> サービス終了のお知らせ </h1>
+    <p>
+        https://dacq.trap.show/ は2024年5月13日をもってサービスを終了いたしました。
+        今後は後継である https://dacq-v2.trap.show/ をご利用ください。
+        10秒後にリダイレクトします。
+    </p>
 
-        <form method="post" action="/upload-csv" enctype="multipart/form-data" class="form-group">
-            <input type="file" name="csv_file" id="csv_file">
-            <button type="submit">Submit !</button>
-        </form>
+    <script>
+        setTimeout(() => {
+            window.location.href = "https://dacq-v2.trap.show/";
+        }, 10000);
+    </script>
 
-        <table class="ranking-table">
-            <tr>
-                <th class="rank">Rank</th>
-                <th class="icon"></th>
-                <th class="user">User</th>
-                <th class="loss">Loss</th>
-                <th class="submitCount">Entries</th>
-                <th class="last">Last</th>
-            </tr>
-            {{ range .Rankings }}
-            <tr>
-                <td class="rank">{{ .Rank }}</td>
-                <td class="icon"><img src="https://q.trap.jp/api/v3/public/icon/{{ .User }}" alt="Icon"></td>
-                <td class="user">{{ .User }}</td>
-                <td class="loss">{{ .Loss }}</td>
-                <td class="submitcount">{{ .SubmitCount }}</td>
-                <td class="last">{{ .Last }}</td>
-            </tr>
-            {{ end }}
-        </table>
-    </div>
-</body>
+
 
 </html>
